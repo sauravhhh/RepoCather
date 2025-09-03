@@ -15,12 +15,12 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            padding: 20px;
+            padding: 0 20px 40px 20px; /* removed top padding */
             display: flex;
-            justify-content: center;
+            justify-content: flex-start;
             align-items: center;
             flex-direction: column;
-            overflow: hidden; /* Disabled scrolling */
+            overflow: auto; /* allow scrolling */
         }
 
         .container {
@@ -30,6 +30,7 @@
             padding: 30px;
             width: 100%;
             max-width: 500px;
+            margin-top: 0; /* removed any top margin */
         }
 
         .header {
@@ -203,7 +204,7 @@
 
         @media (max-width: 480px) {
             body {
-                padding: 10px;
+                padding: 0 10px 40px 10px;
             }
 
             .container {
