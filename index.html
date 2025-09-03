@@ -1,255 +1,29 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>RepoCatcher</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+From: <Saved by Blink>
+Snapshot-Content-Location: https://ppl-ai-code-interpreter-files.s3.amazonaws.com/web/direct-files/074326756ba7eaf2714dbb1b11d593ed/d5f436cb-25e1-4e83-a381-e2ecdb283dba/98ae0564.html
+Subject: Git Repository Downloader
+Date: Wed, 3 Sep 2025 19:45:25 +0530
+MIME-Version: 1.0
+Content-Type: multipart/related;
+	type="text/html";
+	boundary="----MultipartBoundary--it9UM1JKXOXbsuEhsPbkm1qfCYIwVvA2ycsmP9Y8Q0----"
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            overflow: hidden; /* Disabled scrolling */
-        }
 
-        .container {
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            padding: 30px;
-            width: 100%;
-            max-width: 500px;
-        }
+------MultipartBoundary--it9UM1JKXOXbsuEhsPbkm1qfCYIwVvA2ycsmP9Y8Q0----
+Content-Type: text/html
+Content-ID: <frame-70A8F39341D04D824626776F7D8F933D@mhtml.blink>
+Content-Transfer-Encoding: binary
+Content-Location: https://ppl-ai-code-interpreter-files.s3.amazonaws.com/web/direct-files/074326756ba7eaf2714dbb1b11d593ed/d5f436cb-25e1-4e83-a381-e2ecdb283dba/98ae0564.html
 
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .header h1 {
-            color: #333;
-            font-size: 28px;
-            margin-bottom: 10px;
-        }
-
-        .header p {
-            color: #666;
-            font-size: 14px;
-            line-height: 1.5;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 8px;
-            font-size: 16px;
-        }
-
-        input[type='text'],
-        select {
-            width: 100%;
-            padding: 15px;
-            border: 2px solid #e1e5e9;
-            border-radius: 12px;
-            font-size: 16px;
-            transition: all 0.3s ease;
-            background: #f8f9fa;
-        }
-
-        input[type='text']:focus,
-        select:focus {
-            outline: none;
-            border-color: #667eea;
-            background: white;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .url-input {
-            position: relative;
-        }
-
-        .url-prefix {
-            position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #666;
-            font-size: 16px;
-            pointer-events: none;
-        }
-
-        .url-input input {
-            padding-left: 140px;
-        }
-
-        .download-btn {
-            width: 100%;
-            padding: 18px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 18px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 20px;
-            min-height: 48px;
-            touch-action: manipulation;
-        }
-
-        .download-btn:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
-        }
-
-        .download-btn:active {
-            transform: translateY(0);
-        }
-
-        .download-btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .loading {
-            display: none;
-            text-align: center;
-            margin: 20px 0;
-        }
-
-        .spinner {
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #667eea;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 10px;
-        }
-
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-
-        .success,
-        .error {
-            padding: 15px;
-            border-radius: 8px;
-            margin: 15px 0;
-            font-weight: 500;
-        }
-
-        .success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-
-        .error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-
-        .format-info {
-            background: #e3f2fd;
-            padding: 15px;
-            border-radius: 8px;
-            margin: 15px 0;
-            font-size: 14px;
-            color: #1565c0;
-        }
-
-        .format-info strong {
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        .examples {
-            margin-top: 10px;
-            font-size: 13px;
-        }
-
-        .examples div {
-            margin: 3px 0;
-            font-family: monospace;
-            background: rgba(255, 255, 255, 0.5);
-            padding: 5px;
-            border-radius: 4px;
-        }
-
-        @media (max-width: 480px) {
-            body {
-                padding: 10px;
-            }
-
-            .container {
-                padding: 20px;
-            }
-
-            .header h1 {
-                font-size: 24px;
-            }
-
-            .url-prefix {
-                font-size: 14px;
-                left: 12px;
-            }
-
-            .url-input input {
-                padding-left: 120px;
-                font-size: 14px;
-            }
-
-            input[type='text'],
-            select {
-                font-size: 16px;
-                /* Prevent zoom on iOS */
-            }
-        }
-
-        /* Footer style with increased bottom margin */
-        .footer {
-            position: fixed;
-            bottom: 40px; /* Increased distance from 10px to 40px */
-            left: 50%;
-            transform: translateX(-50%);
-            color: white;
-            font-size: 14px;
-            font-weight: 500;
-            user-select: none;
-            z-index: 1000;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        }
-    </style>
+<!DOCTYPE html><html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><link rel="stylesheet" type="text/css" href="cid:css-cb8ae568-4934-4bed-a00a-b03d8520cbf6@mhtml.blink" />
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Git Repository Downloader</title>
+    
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>🚀 RepoCatcher</h1>
+            <h1>🚀 Git Repository Downloader</h1>
             <p>Download any public GitHub repository as a ZIP file with just a few taps!</p>
         </div>
 
@@ -258,13 +32,13 @@
                 <label for="repoUrl">Repository URL or Path</label>
                 <div class="url-input">
                     <span class="url-prefix">github.com/</span>
-                    <input type="text" id="repoUrl" placeholder="username/repository" required />
+                    <input type="text" id="repoUrl" placeholder="username/repository" required="">
                 </div>
             </div>
 
             <div class="form-group">
                 <label for="branch">Branch/Tag</label>
-                <input type="text" id="branch" placeholder="main" value="main" />
+                <input type="text" id="branch" placeholder="main" value="main">
             </div>
 
             <div class="form-group">
@@ -284,12 +58,10 @@
                 </div>
             </div>
 
-            <button type="submit" class="download-btn" id="downloadBtn">
-                📦 Download Repository
-            </button>
+            <button type="submit" class="download-btn" id="downloadBtn" style="">📦 Download Repository</button>
         </form>
 
-        <div class="loading" id="loading">
+        <div class="loading" id="loading" style="display: none;">
             <div class="spinner"></div>
             <p>Preparing your download...</p>
         </div>
@@ -297,159 +69,79 @@
         <div id="message"></div>
     </div>
 
-    <div class="footer">
-        Made with ❤️ by Sauravhhh
-    </div>
+    
 
-    <script>
-        class GitRepoDownloader {
-            constructor() {
-                this.form = document.getElementById('downloadForm');
-                this.repoUrlInput = document.getElementById('repoUrl');
-                this.branchInput = document.getElementById('branch');
-                this.formatSelect = document.getElementById('format');
-                this.downloadBtn = document.getElementById('downloadBtn');
-                this.loading = document.getElementById('loading');
-                this.message = document.getElementById('message');
+</body></html>
+------MultipartBoundary--it9UM1JKXOXbsuEhsPbkm1qfCYIwVvA2ycsmP9Y8Q0----
+Content-Type: text/css
+Content-Transfer-Encoding: binary
+Content-Location: cid:css-cb8ae568-4934-4bed-a00a-b03d8520cbf6@mhtml.blink
 
-                this.initializeEventListeners();
-            }
+@charset "utf-8";
 
-            initializeEventListeners() {
-                this.form.addEventListener('submit', (e) => this.handleSubmit(e));
-                this.repoUrlInput.addEventListener('input', () => this.validateInput());
-            }
+* { margin: 0px; padding: 0px; box-sizing: border-box; }
 
-            validateInput() {
-                const url = this.repoUrlInput.value.trim();
-                const isValid = this.parseRepoUrl(url);
-                this.downloadBtn.disabled = !isValid || !url;
-            }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: linear-gradient(135deg, rgb(102, 126, 234) 0%, rgb(118, 75, 162) 100%); min-height: 100vh; padding: 20px; display: flex; justify-content: center; align-items: center; }
 
-            parseRepoUrl(url) {
-                if (!url) return null;
+.container { background: white; border-radius: 16px; box-shadow: rgba(0, 0, 0, 0.1) 0px 20px 40px; padding: 30px; width: 100%; max-width: 500px; }
 
-                url = url
-                    .replace(/^https?:\/\//, '')
-                    .replace(/^github\.com\//, '')
-                    .replace(/\.git$/, '')
-                    .replace(/\/$/, '');
+.header { text-align: center; margin-bottom: 30px; }
 
-                const match = url.match(/^([a-zA-Z0-9._-]+)\/([a-zA-Z0-9._-]+)$/);
+.header h1 { color: rgb(51, 51, 51); font-size: 28px; margin-bottom: 10px; }
 
-                if (match) {
-                    return {
-                        owner: match[1],
-                        repo: match[2],
-                    };
-                }
+.header p { color: rgb(102, 102, 102); font-size: 14px; line-height: 1.5; }
 
-                return null;
-            }
+.form-group { margin-bottom: 20px; }
 
-            showMessage(text, type) {
-                this.message.innerHTML = `<div class="${type}">${text}</div>`;
-                setTimeout(() => {
-                    this.message.innerHTML = '';
-                }, 5000);
-            }
+label { display: block; font-weight: 600; color: rgb(51, 51, 51); margin-bottom: 8px; font-size: 16px; }
 
-            showLoading(show) {
-                this.loading.style.display = show ? 'block' : 'none';
-                this.downloadBtn.disabled = show;
-                this.downloadBtn.textContent = show ? 'Preparing...' : '📦 Download Repository';
-            }
+input[type="text"], select { width: 100%; padding: 15px; border: 2px solid rgb(225, 229, 233); border-radius: 12px; font-size: 16px; transition: 0.3s; background: rgb(248, 249, 250); }
 
-            async handleSubmit(e) {
-                e.preventDefault();
+input[type="text"]:focus, select:focus { outline: none; border-color: rgb(102, 126, 234); background: white; box-shadow: rgba(102, 126, 234, 0.1) 0px 0px 0px 3px; }
 
-                const repoInfo = this.parseRepoUrl(this.repoUrlInput.value.trim());
-                if (!repoInfo) {
-                    this.showMessage(
-                        'Please enter a valid GitHub repository URL or path (e.g., username/repository)',
-                        'error'
-                    );
-                    return;
-                }
+.url-input { position: relative; }
 
-                const branch = this.branchInput.value.trim() || 'main';
-                const format = this.formatSelect.value;
+.url-prefix { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: rgb(102, 102, 102); font-size: 16px; pointer-events: none; }
 
-                try {
-                    this.showLoading(true);
-                    await this.downloadRepository(repoInfo.owner, repoInfo.repo, branch, format);
-                } catch (error) {
-                    console.error('Download error:', error);
-                    this.showMessage(`Failed to download repository: ${error.message}`, 'error');
-                } finally {
-                    this.showLoading(false);
-                }
-            }
+.url-input input { padding-left: 140px; }
 
-            async downloadRepository(owner, repo, branch, format) {
-                const downloadUrl = `https://api.github.com/repos/${owner}/${repo}/${format}/${branch}`;
+.download-btn { width: 100%; padding: 18px; background: linear-gradient(135deg, rgb(102, 126, 234) 0%, rgb(118, 75, 162) 100%); color: white; border: none; border-radius: 12px; font-size: 18px; font-weight: 600; cursor: pointer; transition: 0.3s; margin-top: 20px; min-height: 48px; touch-action: manipulation; }
 
-                try {
-                    const checkResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}`);
+.download-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: rgba(102, 126, 234, 0.3) 0px 10px 25px; }
 
-                    if (!checkResponse.ok) {
-                        if (checkResponse.status === 404) {
-                            throw new Error(
-                                "Repository not found. Please check the repository name and make sure it's public."
-                            );
-                        } else if (checkResponse.status === 403) {
-                            throw new Error('Repository is private or access is restricted.');
-                        } else {
-                            throw new Error(`Repository check failed: ${checkResponse.status}`);
-                        }
-                    }
+.download-btn:active { transform: translateY(0px); }
 
-                    const repoData = await checkResponse.json();
+.download-btn:disabled { background: rgb(204, 204, 204); cursor: not-allowed; transform: none; }
 
-                    this.triggerDownload(
-                        downloadUrl,
-                        `${owner}-${repo}-${branch}.${format === 'zipball' ? 'zip' : 'tar.gz'}`
-                    );
+.loading { display: none; text-align: center; margin: 20px 0px; }
 
-                    this.showMessage(`✅ Download started for ${owner}/${repo} (${branch} branch)`, 'success');
-                } catch (error) {
-                    if (error.message.includes('Failed to fetch')) {
-                        throw new Error('Network error. Please check your internet connection.');
-                    }
-                    throw error;
-                }
-            }
+.spinner { border-width: 3px; border-style: solid; border-color: rgb(102, 126, 234) rgb(243, 243, 243) rgb(243, 243, 243); border-image: initial; border-radius: 50%; width: 40px; height: 40px; animation: 1s linear 0s infinite normal none running spin; margin: 0px auto 10px; }
 
-            triggerDownload(url, filename) {
-                const link = document.createElement('a');
-                link.href = url;
-                link.download = filename;
-                link.style.display = 'none';
+@keyframes spin { 
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
 
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-            }
-        }
+.success, .error { padding: 15px; border-radius: 8px; margin: 15px 0px; font-weight: 500; }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            new GitRepoDownloader();
-        });
+.success { background: rgb(212, 237, 218); color: rgb(21, 87, 36); border: 1px solid rgb(195, 230, 203); }
 
-        // Touch feedback for mobile
-        document.addEventListener('touchstart', function (e) {
-            if (e.target.classList.contains('download-btn')) {
-                e.target.style.transform = 'scale(0.98)';
-            }
-        });
+.error { background: rgb(248, 215, 218); color: rgb(114, 28, 36); border: 1px solid rgb(245, 198, 203); }
 
-        document.addEventListener('touchend', function (e) {
-            if (e.target.classList.contains('download-btn')) {
-                setTimeout(() => {
-                    e.target.style.transform = '';
-                }, 150);
-            }
-        });
-    </script>
-</body>
-</html>
+.format-info { background: rgb(227, 242, 253); padding: 15px; border-radius: 8px; margin: 15px 0px; font-size: 14px; color: rgb(21, 101, 192); }
+
+.format-info strong { display: block; margin-bottom: 5px; }
+
+.examples { margin-top: 10px; font-size: 13px; }
+
+.examples div { margin: 3px 0px; font-family: monospace; background: rgba(255, 255, 255, 0.5); padding: 5px; border-radius: 4px; }
+
+@media (max-width: 480px) {
+  body { padding: 10px; }
+  .container { padding: 20px; }
+  .header h1 { font-size: 24px; }
+  .url-prefix { font-size: 14px; left: 12px; }
+  .url-input input { padding-left: 120px; font-size: 14px; }
+  input[type="text"], select { font-size: 16px; }
+}
+------MultipartBoundary--it9UM1JKXOXbsuEhsPbkm1qfCYIwVvA2ycsmP9Y8Q0------
