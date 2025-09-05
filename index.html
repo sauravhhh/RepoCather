@@ -1,438 +1,406 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>RepoCatcher</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 10px 20px 40px 20px; /* less top padding, added bottom padding */
-            display: flex;
-            justify-content: center;
-            align-items: flex-start; /* align at top */
-            flex-direction: column;
-            overflow: auto; /* allow scrolling */
-        }
-
-        .container {
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            padding: 30px;
-            width: 100%;
-            max-width: 500px;
-            margin-top: 10px; /* small top margin */
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .header h1 {
-            color: #333;
-            font-size: 28px;
-            margin-bottom: 10px;
-        }
-
-        .header p {
-            color: #666;
-            font-size: 14px;
-            line-height: 1.5;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 8px;
-            font-size: 16px;
-        }
-
-        input[type='text'],
-        select {
-            width: 100%;
-            padding: 15px;
-            border: 2px solid #e1e5e9;
-            border-radius: 12px;
-            font-size: 16px;
-            transition: all 0.3s ease;
-            background: #f8f9fa;
-        }
-
-        input[type='text']:focus,
-        select:focus {
-            outline: none;
-            border-color: #667eea;
-            background: white;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .url-input {
-            position: relative;
-        }
-
-        .url-prefix {
-            position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #666;
-            font-size: 16px;
-            pointer-events: none;
-        }
-
-        .url-input input {
-            padding-left: 140px;
-        }
-
-        .download-btn {
-            width: 100%;
-            padding: 18px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 18px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 20px;
-            min-height: 48px;
-            touch-action: manipulation;
-        }
-
-        .download-btn:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
-        }
-
-        .download-btn:active {
-            transform: translateY(0);
-        }
-
-        .download-btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .loading {
-            display: none;
-            text-align: center;
-            margin: 20px 0;
-        }
-
-        .spinner {
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #667eea;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 10px;
-        }
-
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-
-        .success,
-        .error {
-            padding: 15px;
-            border-radius: 8px;
-            margin: 15px 0;
-            font-weight: 500;
-        }
-
-        .success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-
-        .error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-
-        .format-info {
-            background: #e3f2fd;
-            padding: 15px;
-            border-radius: 8px;
-            margin: 15px 0;
-            font-size: 14px;
-            color: #1565c0;
-        }
-
-        .format-info strong {
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        .examples {
-            margin-top: 10px;
-            font-size: 13px;
-        }
-
-        .examples div {
-            margin: 3px 0;
-            font-family: monospace;
-            background: rgba(255, 255, 255, 0.5);
-            padding: 5px;
-            border-radius: 4px;
-        }
-
-        @media (max-width: 480px) {
-            body {
-                padding: 10px 10px 40px 10px;
-            }
-
-            .container {
-                padding: 20px;
-            }
-
-            .header h1 {
-                font-size: 24px;
-            }
-
-            .url-prefix {
-                font-size: 14px;
-                left: 12px;
-            }
-
-            .url-input input {
-                padding-left: 120px;
-                font-size: 14px;
-            }
-
-            input[type='text'],
-            select {
-                font-size: 16px;
-                /* Prevent zoom on iOS */
-            }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GitScan</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+      background: #fff;
+      color: #24292e;
+      margin: 0;
+      padding: 2rem 1rem 4rem;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      min-height: 100vh;
+      box-sizing: border-box;
+    }
+    h1 {
+      font-weight: 600;
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+      color: #24292e;
+      text-align: left;
+    }
+    .input-row {
+      display: flex;
+      align-items: center;
+      position: relative;
+      margin-bottom: 1rem;
+    }
+    input[type="text"] {
+      width: 100%;
+      font-size: 1rem;
+      border: 1.5px solid #d0d7de;
+      border-radius: 6px;
+      background-color: #f6f8fa;
+      color: #24292e;
+      box-sizing: border-box;
+      padding: 0.5rem 2.5rem 0.5rem 0.75rem;
+      transition: border-color 0.2s;
+    }
+    input[type="text"]:focus {
+      border-color: #0969da;
+      outline: none;
+      background-color: #fff;
+    }
+    .clear-btn {
+      position: absolute;
+      right: 0.5rem;
+      background: none;
+      border: none;
+      color: #57606a;
+      font-size: 1.12rem;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      padding: 3px 6px;
+      border-radius: 50%;
+      outline: none;
+    }
+    .clear-btn:active, .clear-btn:focus {
+      background: #eaecec;
+      color: #0969da;
+    }
+    button, .download-btn {
+      background-color: #2ea44f;
+      border: 1px solid rgba(27, 31, 35, 0.15);
+      border-radius: 6px;
+      color: white;
+      font-weight: 600;
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      cursor: pointer;
+      user-select: none;
+      margin-bottom: 1.5rem;
+      transition: background-color 0.2s;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .download-btn {
+      background: #0969da;
+      margin: 0.4rem auto 1.2rem auto;
+    }
+    .download-btn:hover {
+      background: #0558b0;
+    }
+    button:hover {
+      background-color: #2c974b;
+    }
+    button:disabled {
+      background-color: #94d3a2;
+      cursor: not-allowed;
+    }
+    .user-profile {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .avatar {
+      border-radius: 50%;
+      width: 120px;
+      height: 120px;
+      margin-bottom: 1rem;
+      box-shadow: 0 2px 10px #edf2fa;
+      object-fit: cover;
+    }
+    h2 {
+      font-weight: 600;
+      font-size: 1.5rem;
+      margin: 0.3rem 0 0.2rem 0;
+      color: #24292e;
+    }
+    p.bio {
+      color: #57606a;
+      margin: 0 0 0.7rem 0;
+    }
+    .profile-info {
+      display: flex;
+      justify-content: center;
+      gap: 1.3rem;
+      margin-bottom: 1rem;
+      font-size: 1rem;
+      color: #596170;
+    }
+    a.profile-link {
+      color: #0969da;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1rem;
+      margin-bottom: 0.3rem;
+      display: inline-block;
+    }
+    a.profile-link:hover {
+      text-decoration: underline;
+    }
+    ul.repo-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    ul.repo-list li {
+      border: 1px solid #d0d7de;
+      border-radius: 6px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      transition: background-color 0.2s;
+      cursor: pointer;
+    }
+    ul.repo-list li:hover {
+      background-color: #f6f8fa;
+    }
+    ul.repo-list a.repo-name {
+      font-weight: 600;
+      font-size: 1.1rem;
+      color: #0969da;
+      text-decoration: none;
+      margin-bottom: 0.1rem;
+    }
+    ul.repo-list a.repo-name:hover {
+      text-decoration: underline;
+    }
+    .repo-desc {
+      margin: 0.22rem 0 0.35rem;
+      color: #57606a;
+      font-size: 0.93rem;
+    }
+    small.repo-updated {
+      color: #6e7781;
+      font-size: 0.8rem;
+      margin-top: 0.2rem;
+    }
+    .view-more-container {
+      text-align: center;
+      margin: 1rem 0 1.3rem 0;
+    }
+    .view-more-btn {
+      background-color: #0969da;
+      color: #fff;
+      padding: 0.47rem 1.07rem;
+      font-size: 1rem;
+      font-weight: 500;
+      border: none;
+      border-radius: 7px;
+      cursor: pointer;
+      margin-top: 0.2rem;
+      margin-bottom: 1rem;
+      transition: background 0.2s;
+      margin-left: auto;
+      margin-right: auto;
+      display: block;
+    }
+    .view-more-btn:hover {
+      background: #0558b0;
+    }
+    footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 2.5rem;
+      background-color: #fff;
+      border-top: 1px solid #d0d7de;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 1rem;
+      color: #57606a;
+      user-select: none;
+      z-index: 1000;
+      font-family: inherit;
+    }
+    @media (max-width: 600px) {
+      body {
+        padding-left: 0.2rem;
+        padding-right: 0.2rem;
+      }
+      ul.repo-list li {
+        font-size: 1rem;
+        padding: 1rem 0.5rem;
+      }
+      .user-profile {
+        margin-bottom: 1.2rem;
+      }
+      h2 { font-size: 1.2rem;}
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>🚀 RepoCatcher</h1>
-            <p>Download any public GitHub repository as a ZIP file with just a few taps!</p>
-        </div>
+  <h1>GitScan</h1>
+  <div class="input-row">
+    <input type="text" id="githubUsername" placeholder="GitHub username" aria-label="GitHub username" autocomplete="off" />
+    <button class="clear-btn" id="clearInputBtn" title="Clear" type="button">&#x2715;</button>
+  </div>
+  <button id="fetchGitHubBtn">Fetch Info</button>
+  <div id="githubResult" style="margin-top: 2rem;"></div>
+  <footer>
+    Made with ❤️ by Sauravhhh
+  </footer>
+  <script>
+    const githubBtn = document.getElementById('fetchGitHubBtn');
+    const githubInput = document.getElementById('githubUsername');
+    const githubResult = document.getElementById('githubResult');
+    const clearBtn = document.getElementById('clearInputBtn');
+    let lastRepos = [];
+    let lastUsername = "";
+    let totalRepos = 0;
+    let shownRepos = 0;
+    let avatarUrl = "";
+    let lastProfile = null;
+    const PAGE_SIZE = 10;
 
-        <form id="downloadForm">
-            <div class="form-group">
-                <label for="repoUrl">Repository URL or Path</label>
-                <div class="url-input">
-                    <span class="url-prefix">github.com/</span>
-                    <input type="text" id="repoUrl" placeholder="username/repository" required />
-                </div>
+    function downloadProfilePic(url, username) {
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = username + "-avatar.jpg";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    function downloadAllDetails(profile, repos) {
+      let lines = [];
+      lines.push(`Username: ${profile.login}`);
+      lines.push(`Name: ${profile.name || ""}`);
+      lines.push(`Bio: ${profile.bio || ""}`);
+      lines.push(`Public Repos: ${profile.public_repos}`);
+      lines.push(`Joined: ${new Date(profile.created_at).toLocaleDateString()}`);
+      lines.push(`GitHub Profile: ${profile.html_url}`);
+      lines.push("");
+      lines.push("Repositories:");
+      if (repos.length === 0) {
+        lines.push("No repositories found.");
+      } else {
+        repos.forEach((repo, idx) => {
+          lines.push(`${idx+1}. ${repo.name}`);
+        });
+      }
+      let blob = new Blob([lines.join('\n')], {type: 'text/plain'});
+      let link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `${profile.login}-github-details.txt`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    async function fetchGitHubData(username, resetPage = true) {
+      githubResult.innerHTML = '<p>Loading...</p>';
+      try {
+        // User info
+        const userResponse = await fetch(`https://api.github.com/users/${username}`);
+        if (!userResponse.ok) throw new Error('User not found');
+        const user = await userResponse.json();
+        lastProfile = user;
+        avatarUrl = user.avatar_url;
+        // Repo info
+        totalRepos = user.public_repos;
+        lastUsername = username;
+        shownRepos = 0;
+        if (resetPage) lastRepos = [];
+        let reposPageResponse = await fetch(`https://api.github.com/users/${username}/repos?sort=updated&per_page=${PAGE_SIZE}&page=1`);
+        if (!reposPageResponse.ok) throw new Error('Could not fetch repositories');
+        let reposPage = await reposPageResponse.json();
+        lastRepos = reposPage;
+        let joinedDate = new Date(user.created_at).toLocaleDateString();
+
+        const userHTML = `
+          <div class="user-profile">
+            <img src="${user.avatar_url}" alt="Avatar of ${user.login}" class="avatar" id="avatarImage"/>
+            <h2>${user.name || user.login}</h2>
+            <p class="bio">${user.bio || ''}</p>
+            <div class="profile-info">
+              <span title="Public repositories">Repos: ${totalRepos}</span>
+              <span title="GitHub join date">Joined: ${joinedDate}</span>
             </div>
-
-            <div class="form-group">
-                <label for="branch">Branch/Tag</label>
-                <input type="text" id="branch" placeholder="main" value="main" />
-            </div>
-
-            <div class="form-group">
-                <label for="format">Download Format</label>
-                <select id="format">
-                    <option value="zipball">ZIP Archive</option>
-                    <option value="tarball">TAR.GZ Archive</option>
-                </select>
-            </div>
-
-            <div class="format-info">
-                <strong>Supported URL formats:</strong>
-                <div class="examples">
-                    <div>username/repository</div>
-                    <div>github.com/username/repository</div>
-                    <div>https://github.com/username/repository</div>
-                </div>
-            </div>
-
-            <button type="submit" class="download-btn" id="downloadBtn">
-                📦 Download Repository
-            </button>
-        </form>
-
-        <div class="loading" id="loading">
-            <div class="spinner"></div>
-            <p>Preparing your download...</p>
-        </div>
-
-        <div id="message"></div>
-    </div>
-
-    <script>
-        class GitRepoDownloader {
-            constructor() {
-                this.form = document.getElementById('downloadForm');
-                this.repoUrlInput = document.getElementById('repoUrl');
-                this.branchInput = document.getElementById('branch');
-                this.formatSelect = document.getElementById('format');
-                this.downloadBtn = document.getElementById('downloadBtn');
-                this.loading = document.getElementById('loading');
-                this.message = document.getElementById('message');
-
-                this.initializeEventListeners();
-            }
-
-            initializeEventListeners() {
-                this.form.addEventListener('submit', (e) => this.handleSubmit(e));
-                this.repoUrlInput.addEventListener('input', () => this.validateInput());
-            }
-
-            validateInput() {
-                const url = this.repoUrlInput.value.trim();
-                const isValid = this.parseRepoUrl(url);
-                this.downloadBtn.disabled = !isValid || !url;
-            }
-
-            parseRepoUrl(url) {
-                if (!url) return null;
-
-                url = url
-                    .replace(/^https?:\/\//, '')
-                    .replace(/^github\.com\//, '')
-                    .replace(/\.git$/, '')
-                    .replace(/\/$/, '');
-
-                const match = url.match(/^([a-zA-Z0-9._-]+)\/([a-zA-Z0-9._-]+)$/);
-
-                if (match) {
-                    return {
-                        owner: match[1],
-                        repo: match[2],
-                    };
-                }
-
-                return null;
-            }
-
-            showMessage(text, type) {
-                this.message.innerHTML = `<div class="${type}">${text}</div>`;
-                setTimeout(() => {
-                    this.message.innerHTML = '';
-                }, 5000);
-            }
-
-            showLoading(show) {
-                this.loading.style.display = show ? 'block' : 'none';
-                this.downloadBtn.disabled = show;
-                this.downloadBtn.textContent = show ? 'Preparing...' : '📦 Download Repository';
-            }
-
-            async handleSubmit(e) {
-                e.preventDefault();
-
-                const repoInfo = this.parseRepoUrl(this.repoUrlInput.value.trim());
-                if (!repoInfo) {
-                    this.showMessage(
-                        'Please enter a valid GitHub repository URL or path (e.g., username/repository)',
-                        'error'
-                    );
-                    return;
-                }
-
-                const branch = this.branchInput.value.trim() || 'main';
-                const format = this.formatSelect.value;
-
-                try {
-                    this.showLoading(true);
-                    await this.downloadRepository(repoInfo.owner, repoInfo.repo, branch, format);
-                } catch (error) {
-                    console.error('Download error:', error);
-                    this.showMessage(`Failed to download repository: ${error.message}`, 'error');
-                } finally {
-                    this.showLoading(false);
-                }
-            }
-
-            async downloadRepository(owner, repo, branch, format) {
-                const downloadUrl = `https://api.github.com/repos/${owner}/${repo}/${format}/${branch}`;
-
-                try {
-                    const checkResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}`);
-
-                    if (!checkResponse.ok) {
-                        if (checkResponse.status === 404) {
-                            throw new Error(
-                                "Repository not found. Please check the repository name and make sure it's public."
-                            );
-                        } else if (checkResponse.status === 403) {
-                            throw new Error('Repository is private or access is restricted.');
-                        } else {
-                            throw new Error(`Repository check failed: ${checkResponse.status}`);
-                        }
-                    }
-
-                    const repoData = await checkResponse.json();
-
-                    const ext = format === 'zipball' ? 'zip' : 'tar.gz';
-                    const fullFilename = `${repo}-${branch}.${ext}`;
-
-                    this.triggerDownload(downloadUrl, fullFilename);
-
-                    this.showMessage(`✅ Download started for ${owner}/${repo} (${branch} branch)`, 'success');
-                } catch (error) {
-                    if (error.message.includes('Failed to fetch')) {
-                        throw new Error('Network error. Please check your internet connection.');
-                    }
-                    throw error;
-                }
-            }
-
-            triggerDownload(url, filename) {
-                const link = document.createElement('a');
-                link.href = url;
-                link.download = filename;
-                link.style.display = 'none';
-
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-            }
+            <a class="profile-link" href="${user.html_url}" target="_blank" rel="noopener noreferrer">View GitHub Profile</a>
+            <button class="download-btn" id="downloadAvatarBtn" type="button">Download Profile Picture</button>
+          </div>
+        `;
+        function renderRepos(repos) {
+          if (repos.length === 0) {
+            return '<ul class="repo-list"><li>No repositories found.</li></ul>';
+          }
+          let repoHTML = '<ul class="repo-list">';
+          repos.forEach(repo => {
+            repoHTML += `
+              <li>
+                <a class="repo-name" href="${repo.html_url}" target="_blank" rel="noopener noreferrer">${repo.name}</a>
+                ${repo.description ? `<p class="repo-desc">${repo.description}</p>` : ''}
+                <small class="repo-updated">Updated: ${new Date(repo.updated_at).toLocaleDateString()}</small>
+              </li>
+            `;
+          });
+          repoHTML += '</ul>';
+          return repoHTML;
         }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            new GitRepoDownloader();
-        });
-
-        // Touch feedback for mobile
-        document.addEventListener('touchstart', function (e) {
-            if (e.target.classList.contains('download-btn')) {
-                e.target.style.transform = 'scale(0.98)';
+        shownRepos = lastRepos.length;
+        let showMoreHTML = "";
+        if (shownRepos < totalRepos) {
+          showMoreHTML = `
+            <div class="view-more-container">
+              <button class="view-more-btn" id="viewMoreBtn">View More</button>
+            </div>
+          `;
+        }
+        let downloadDetailsHTML = `
+          <button class="download-btn" id="downloadDetailsBtn" type="button">Download All Details</button>
+        `;
+        githubResult.innerHTML = userHTML + renderRepos(lastRepos) + showMoreHTML + downloadDetailsHTML;
+        // Download avatar button
+        document.getElementById('downloadAvatarBtn').onclick = () => downloadProfilePic(avatarUrl, user.login);
+        // Download all details button
+        document.getElementById('downloadDetailsBtn').onclick = () => downloadAllDetails(user, lastRepos);
+        if (shownRepos < totalRepos) {
+          document.getElementById('viewMoreBtn').onclick = async () => {
+            let nextPage = Math.floor(shownRepos / PAGE_SIZE) + 1;
+            let nextReposRes = await fetch(`https://api.github.com/users/${username}/repos?sort=updated&per_page=${PAGE_SIZE}&page=${nextPage+1}`);
+            let nextRepos = await nextReposRes.json();
+            lastRepos = lastRepos.concat(nextRepos);
+            shownRepos = lastRepos.length;
+            let newShowMoreHTML = "";
+            if (shownRepos < totalRepos) {
+              newShowMoreHTML = `
+                <div class="view-more-container">
+                  <button class="view-more-btn" id="viewMoreBtn">View More</button>
+                </div>
+              `;
             }
-        });
-
-        document.addEventListener('touchend', function (e) {
-            if (e.target.classList.contains('download-btn')) {
-                setTimeout(() => {
-                    e.target.style.transform = '';
-                }, 150);
+            githubResult.innerHTML = userHTML + renderRepos(lastRepos) + newShowMoreHTML + downloadDetailsHTML;
+            document.getElementById('downloadAvatarBtn').onclick = () => downloadProfilePic(avatarUrl, user.login);
+            document.getElementById('downloadDetailsBtn').onclick = () => downloadAllDetails(user, lastRepos);
+            if (shownRepos < totalRepos) {
+              document.getElementById('viewMoreBtn').onclick = arguments.callee;
             }
-        });
-    </script>
+          };
+        }
+      } catch (error) {
+        githubResult.innerHTML = `<p style="color:red;text-align:center;">Error: ${error.message}</p>`;
+      }
+    }
+    githubBtn.addEventListener('click', () => {
+      const username = githubInput.value.trim();
+      if (!username) {
+        githubResult.innerHTML = '<p style="color:#676;">Please enter a GitHub username.</p>';
+        return;
+      }
+      fetchGitHubData(username, true);
+    });
+    githubInput.addEventListener('keyup', event => {
+      if (event.key === 'Enter') {
+        githubBtn.click();
+      }
+    });
+    clearBtn.addEventListener('click', () => {
+      githubInput.value = '';
+      githubResult.innerHTML = '';
+      githubInput.focus();
+    });
+  </script>
 </body>
 </html>
