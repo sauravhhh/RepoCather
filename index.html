@@ -1,431 +1,438 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>RepoCatcher</title>
-  <style>
-    /* Reset */
-    * {
-      margin: 0; padding: 0; box-sizing: border-box;
-    }
-    html, body {
-      height: 100%;
-      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, sans-serif;
-      background: #f2f2f7;
-      color: #2c2c2e;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-      overflow: hidden;
-    }
-    #app {
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-      padding: 0 20px;
-    }
-    main {
-      flex: 1 1 auto;
-      overflow-y: auto;
-      padding-top: 20px;
-      padding-bottom: 60px; /* space for footer */
-      max-width: 500px;
-      margin: 0 auto;
-      width: 100%;
-    }
-    .container {
-      background: #fff;
-      border-radius: 30px;
-      box-shadow: 0 10px 20px rgb(0 0 0 / 0.1);
-      padding: 32px 28px 40px 28px;
-      box-sizing: border-box;
-    }
-    .header {
-      text-align: center;
-      margin-bottom: 32px;
-    }
-    .header h1 {
-      font-weight: 700;
-      font-size: 32px;
-      margin-bottom: 4px;
-      color: #1c1c1e;
-    }
-    .header p {
-      font-size: 15px;
-      color: #3c3c434d;
-      line-height: 1.4;
-    }
-    label {
-      display: block;
-      font-weight: 600;
-      color: #5a5a5f; /* slightly darker than before #3c3c434d */
-      font-size: 13px;
-      margin-bottom: 8px;
-      text-transform: uppercase;
-      letter-spacing: -0.01em;
-    }
-    input[type='text'],
-    select {
-      width: 100%;
-      padding: 14px 16px;
-      border: 1px solid #c7c7cc;
-      border-radius: 14px;
-      font-size: 17px;
-      color: #121212;
-      background: #f9f9fa;
-      box-shadow: inset 0 1px 3px rgb(60 60 67 / 0.1);
-      transition: border-color 0.25s ease;
-    }
-    input[type='text']:focus,
-    select:focus {
-      outline: none;
-      border-color: #007aff;
-      background: #fff;
-      box-shadow: 0 0 6px 2px rgba(0, 122, 255, 0.3);
-    }
-    .url-input {
-      position: relative;
-    }
-    .url-prefix {
-      position: absolute;
-      top: 50%;
-      left: 16px;
-      transform: translateY(-50%);
-      font-weight: 600;
-      font-size: 15px;
-      color: #8e8e93;
-      pointer-events: none;
-      user-select: none;
-    }
-    .url-input input {
-      padding-left: 120px;
-    }
-    select {
-      background-image:
-        url('data:image/svg+xml;charset=UTF-8,<svg fill="none" stroke="%238e8e93" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><polyline points="6 9 12 15 18 9"/></svg>');
-      background-repeat: no-repeat;
-      background-position: right 12px center;
-      background-size: 16px 16px;
-      cursor: pointer;
-    }
-    .download-btn {
-      width: 100%;
-      padding: 16px 0;
-      background: #007aff;
-      color: white;
-      font-size: 20px;
-      font-weight: 600;
-      border: none;
-      border-radius: 22px;
-      box-shadow: 0 10px 20px rgba(0, 122, 255, 0.3);
-      cursor: pointer;
-      user-select: none;
-      -webkit-tap-highlight-color: transparent;
-      transition: background-color 0.3s ease, box-shadow 0.3s ease;
-    }
-    .download-btn:hover:not(:disabled) {
-      background: #005ecb;
-      box-shadow: 0 12px 24px rgba(0, 94, 203, 0.4);
-    }
-    .download-btn:active {
-      background: #0041a8;
-      box-shadow: 0 6px 12px rgba(0, 65, 168, 0.5);
-      transform: translateY(1px);
-    }
-    .download-btn:disabled {
-      background: #b0b0b0;
-      cursor: not-allowed;
-      box-shadow: none;
-    }
-    .loading {
-      display: none;
-      margin: 20px 0;
-      text-align: center;
-      font-size: 15px;
-      color: #3c3c4399;
-      user-select: none;
-    }
-    .spinner {
-      border: 3px solid #f3f3f3;
-      border-top: 3px solid #007aff;
-      border-radius: 50%;
-      width: 36px;
-      height: 36px;
-      animation: spin 1s linear infinite;
-      margin: 0 auto 12px auto;
-    }
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-    .success,
-    .error {
-      padding: 14px 16px;
-      border-radius: 16px;
-      margin: 20px 0 0 0;
-      font-weight: 600;
-      font-size: 15px;
-      text-align: center;
-      user-select: none;
-    }
-    .success {
-      background: #d4f7dc;
-      color: #007a2e;
-      border: 1px solid #a0d18d;
-    }
-    .error {
-      background: #fce4e6;
-      color: #a11831;
-      border: 1px solid #f29a9f;
-    }
-    .format-info {
-      background: #e3f2fd; /* same as earlier blue tinted box */
-      padding: 16px 20px;
-      border-radius: 20px;
-      margin: 20px 0;
-      font-size: 14px;
-      color: #1565c0; /* dark blue text color */
-      line-height: 1.4;
-      letter-spacing: -0.01em;
-      user-select: none;
-    }
-    .format-info strong {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: 600;
-      color: #0d3b6e; /* a darker shade for strong text */
-    }
-    .examples {
-      margin-top: 8px;
-      font-family: 'SF Mono', Consolas, 'Liberation Mono', Menlo, monospace;
-      font-size: 13px;
-    }
-    .examples div {
-      margin: 3px 0;
-      padding: 5px 9px;
-      border-radius: 12px;
-      background: rgba(255, 255, 255, 0.5);
-      color: #1565c0; /* blue color text */
-      user-select: text;
-      word-break: break-word;
-    }
-    footer {
-      position: fixed;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      height: 50px;
-      line-height: 50px;
-      font-size: 14px;
-      color: #636366; /* darker gray for footer */
-      font-weight: 600;
-      user-select: none;
-      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto,
-        sans-serif;
-      letter-spacing: -0.01em;
-      background: #f2f2f7;
-      width: 100%;
-      max-width: 500px;
-      text-align: center;
-      box-shadow: inset 0 1px 0 #d1d1d6;
-      z-index: 10000;
-      pointer-events: none;
-    }
-    @media (max-width: 480px) {
-      #app {
-        padding: 0 15px;
-      }
-      .header h1 {
-        font-size: 28px;
-      }
-      .download-btn {
-        font-size: 18px;
-      }
-      .url-input input {
-        padding-left: 100px;
-      }
-      .url-prefix {
-        left: 12px;
-        font-size: 14px;
-      }
-    }
-  </style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>RepoCatcher</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 10px 20px 40px 20px; /* less top padding, added bottom padding */
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* align at top */
+            flex-direction: column;
+            overflow: auto; /* allow scrolling */
+        }
+
+        .container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            width: 100%;
+            max-width: 500px;
+            margin-top: 10px; /* small top margin */
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+
+        input[type='text'],
+        select {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        input[type='text']:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .url-input {
+            position: relative;
+        }
+
+        .url-prefix {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+            font-size: 16px;
+            pointer-events: none;
+        }
+
+        .url-input input {
+            padding-left: 140px;
+        }
+
+        .download-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+            min-height: 48px;
+            touch-action: manipulation;
+        }
+
+        .download-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .download-btn:active {
+            transform: translateY(0);
+        }
+
+        .download-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .success,
+        .error {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-weight: 500;
+        }
+
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .format-info {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-size: 14px;
+            color: #1565c0;
+        }
+
+        .format-info strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .examples {
+            margin-top: 10px;
+            font-size: 13px;
+        }
+
+        .examples div {
+            margin: 3px 0;
+            font-family: monospace;
+            background: rgba(255, 255, 255, 0.5);
+            padding: 5px;
+            border-radius: 4px;
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px 10px 40px 10px;
+            }
+
+            .container {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .url-prefix {
+                font-size: 14px;
+                left: 12px;
+            }
+
+            .url-input input {
+                padding-left: 120px;
+                font-size: 14px;
+            }
+
+            input[type='text'],
+            select {
+                font-size: 16px;
+                /* Prevent zoom on iOS */
+            }
+        }
+    </style>
 </head>
 <body>
-  <div id="app" role="application">
-    <main role="main" tabindex="-1" aria-label="Git repository downloader">
-      <div class="container">
+    <div class="container">
         <div class="header">
-          <h1>🚀 RepoCatcher</h1>
-          <p>Download any public GitHub repository as a ZIP file with just a few taps!</p>
+            <h1>🚀 RepoCatcher</h1>
+            <p>Download any public GitHub repository as a ZIP file with just a few taps!</p>
         </div>
-        <form id="downloadForm">
-          <div class="form-group">
-            <label for="repoUrl">Repository URL or Path</label>
-            <div class="url-input">
-              <span class="url-prefix">github.com/</span>
-              <input
-                type="text"
-                id="repoUrl"
-                placeholder="username/repository"
-                autocomplete="off"
-                autocorrect="off"
-                autocapitalize="none"
-                spellcheck="false"
-                required
-              />
-            </div>
-          </div>
-          <div class="form-group">
-            <label for="branch">Branch/Tag</label>
-            <input
-              type="text"
-              id="branch"
-              placeholder="main"
-              value="main"
-              autocomplete="off"
-              autocorrect="off"
-              autocapitalize="none"
-              spellcheck="false"
-            />
-          </div>
-          <div class="form-group">
-            <label for="format">Download Format</label>
-            <select id="format" aria-label="Download Format">
-              <option value="zipball">ZIP Archive</option>
-              <option value="tarball">TAR.GZ Archive</option>
-            </select>
-          </div>
-          <div class="format-info" aria-live="polite">
-            <strong>Supported URL formats:</strong>
-            <div class="examples" aria-label="Example repository URLs">
-              <div>username/repository</div>
-              <div>github.com/username/repository</div>
-              <div>https://github.com/username/repository</div>
-            </div>
-          </div>
-          <button type="submit" class="download-btn" id="downloadBtn" aria-live="polite" aria-busy="false">
-            📦 Download Repository
-          </button>
-        </form>
-        <div class="loading" id="loading" aria-live="assertive" style="display:none;">
-          <div class="spinner" role="status" aria-label="Loading"></div>
-          <p>Preparing your download...</p>
-        </div>
-        <div id="message" aria-live="polite"></div>
-      </div>
-    </main>
-    <footer aria-hidden="true">Made with ❤️ by Sauravhhh</footer>
-  </div>
 
-  <script>
-    class GitRepoDownloader {
-      constructor() {
-        this.form = document.getElementById('downloadForm');
-        this.repoUrlInput = document.getElementById('repoUrl');
-        this.branchInput = document.getElementById('branch');
-        this.formatSelect = document.getElementById('format');
-        this.downloadBtn = document.getElementById('downloadBtn');
-        this.loading = document.getElementById('loading');
-        this.message = document.getElementById('message');
-        this.initializeEventListeners();
-      }
-      initializeEventListeners() {
-        this.form.addEventListener('submit', (e) => this.handleSubmit(e));
-        this.repoUrlInput.addEventListener('input', () => this.validateInput());
-      }
-      validateInput() {
-        const url = this.repoUrlInput.value.trim();
-        const isValid = this.parseRepoUrl(url);
-        this.downloadBtn.disabled = !isValid || !url;
-      }
-      parseRepoUrl(url) {
-        if (!url) return null;
-        url = url
-          .replace(/^https?:\/\//, '')
-          .replace(/^github\.com\//, '')
-          .replace(/\.git$/, '')
-          .replace(/\/$/, '');
-        const match = url.match(/^([a-zA-Z0-9._-]+)\/([a-zA-Z0-9._-]+)$/);
-        if (match) return { owner: match[1], repo: match[2] };
-        return null;
-      }
-      showMessage(text, type) {
-        this.message.innerHTML = `<div class="${type}">${text}</div>`;
-        setTimeout(() => (this.message.innerHTML = ''), 5000);
-      }
-      showLoading(show) {
-        this.loading.style.display = show ? 'block' : 'none';
-        this.downloadBtn.disabled = show;
-        this.downloadBtn.textContent = show ? 'Preparing...' : '📦 Download Repository';
-        this.downloadBtn.setAttribute('aria-busy', show ? 'true' : 'false');
-      }
-      async handleSubmit(e) {
-        e.preventDefault();
-        const repoInfo = this.parseRepoUrl(this.repoUrlInput.value.trim());
-        if (!repoInfo) {
-          this.showMessage(
-            'Please enter a valid GitHub repository URL or path (e.g., username/repository)',
-            'error',
-          );
-          return;
-        }
-        const branch = this.branchInput.value.trim() || 'main';
-        const format = this.formatSelect.value;
-        try {
-          this.showLoading(true);
-          await this.downloadRepository(repoInfo.owner, repoInfo.repo, branch, format);
-        } catch (error) {
-          console.error('Download error:', error);
-          this.showMessage(`Failed to download repository: ${error.message}`, 'error');
-        } finally {
-          this.showLoading(false);
-        }
-      }
-      async downloadRepository(owner, repo, branch, format) {
-        const downloadUrl = `https://api.github.com/repos/${owner}/${repo}/${format}/${branch}`;
-        try {
-          const checkResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}`);
-          if (!checkResponse.ok) {
-            if (checkResponse.status === 404) {
-              throw new Error(
-                "Repository not found. Please check the repository name and make sure it's public.",
-              );
-            } else if (checkResponse.status === 403) {
-              throw new Error('Repository is private or access is restricted.');
-            } else {
-              throw new Error(`Repository check failed: ${checkResponse.status}`);
+        <form id="downloadForm">
+            <div class="form-group">
+                <label for="repoUrl">Repository URL or Path</label>
+                <div class="url-input">
+                    <span class="url-prefix">github.com/</span>
+                    <input type="text" id="repoUrl" placeholder="username/repository" required />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="branch">Branch/Tag</label>
+                <input type="text" id="branch" placeholder="main" value="main" />
+            </div>
+
+            <div class="form-group">
+                <label for="format">Download Format</label>
+                <select id="format">
+                    <option value="zipball">ZIP Archive</option>
+                    <option value="tarball">TAR.GZ Archive</option>
+                </select>
+            </div>
+
+            <div class="format-info">
+                <strong>Supported URL formats:</strong>
+                <div class="examples">
+                    <div>username/repository</div>
+                    <div>github.com/username/repository</div>
+                    <div>https://github.com/username/repository</div>
+                </div>
+            </div>
+
+            <button type="submit" class="download-btn" id="downloadBtn">
+                📦 Download Repository
+            </button>
+        </form>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Preparing your download...</p>
+        </div>
+
+        <div id="message"></div>
+    </div>
+
+    <script>
+        class GitRepoDownloader {
+            constructor() {
+                this.form = document.getElementById('downloadForm');
+                this.repoUrlInput = document.getElementById('repoUrl');
+                this.branchInput = document.getElementById('branch');
+                this.formatSelect = document.getElementById('format');
+                this.downloadBtn = document.getElementById('downloadBtn');
+                this.loading = document.getElementById('loading');
+                this.message = document.getElementById('message');
+
+                this.initializeEventListeners();
             }
-          }
-          const ext = format === 'zipball' ? 'zip' : 'tar.gz';
-          const fullFilename = `${repo}-${branch}.${ext}`;
-          this.triggerDownload(downloadUrl, fullFilename);
-          this.showMessage(`✅ Download started for ${owner}/${repo} (${branch} branch)`, 'success');
-        } catch (error) {
-          if (error.message.includes('Failed to fetch')) {
-            throw new Error('Network error. Please check your internet connection.');
-          }
-          throw error;
+
+            initializeEventListeners() {
+                this.form.addEventListener('submit', (e) => this.handleSubmit(e));
+                this.repoUrlInput.addEventListener('input', () => this.validateInput());
+            }
+
+            validateInput() {
+                const url = this.repoUrlInput.value.trim();
+                const isValid = this.parseRepoUrl(url);
+                this.downloadBtn.disabled = !isValid || !url;
+            }
+
+            parseRepoUrl(url) {
+                if (!url) return null;
+
+                url = url
+                    .replace(/^https?:\/\//, '')
+                    .replace(/^github\.com\//, '')
+                    .replace(/\.git$/, '')
+                    .replace(/\/$/, '');
+
+                const match = url.match(/^([a-zA-Z0-9._-]+)\/([a-zA-Z0-9._-]+)$/);
+
+                if (match) {
+                    return {
+                        owner: match[1],
+                        repo: match[2],
+                    };
+                }
+
+                return null;
+            }
+
+            showMessage(text, type) {
+                this.message.innerHTML = `<div class="${type}">${text}</div>`;
+                setTimeout(() => {
+                    this.message.innerHTML = '';
+                }, 5000);
+            }
+
+            showLoading(show) {
+                this.loading.style.display = show ? 'block' : 'none';
+                this.downloadBtn.disabled = show;
+                this.downloadBtn.textContent = show ? 'Preparing...' : '📦 Download Repository';
+            }
+
+            async handleSubmit(e) {
+                e.preventDefault();
+
+                const repoInfo = this.parseRepoUrl(this.repoUrlInput.value.trim());
+                if (!repoInfo) {
+                    this.showMessage(
+                        'Please enter a valid GitHub repository URL or path (e.g., username/repository)',
+                        'error'
+                    );
+                    return;
+                }
+
+                const branch = this.branchInput.value.trim() || 'main';
+                const format = this.formatSelect.value;
+
+                try {
+                    this.showLoading(true);
+                    await this.downloadRepository(repoInfo.owner, repoInfo.repo, branch, format);
+                } catch (error) {
+                    console.error('Download error:', error);
+                    this.showMessage(`Failed to download repository: ${error.message}`, 'error');
+                } finally {
+                    this.showLoading(false);
+                }
+            }
+
+            async downloadRepository(owner, repo, branch, format) {
+                const downloadUrl = `https://api.github.com/repos/${owner}/${repo}/${format}/${branch}`;
+
+                try {
+                    const checkResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}`);
+
+                    if (!checkResponse.ok) {
+                        if (checkResponse.status === 404) {
+                            throw new Error(
+                                "Repository not found. Please check the repository name and make sure it's public."
+                            );
+                        } else if (checkResponse.status === 403) {
+                            throw new Error('Repository is private or access is restricted.');
+                        } else {
+                            throw new Error(`Repository check failed: ${checkResponse.status}`);
+                        }
+                    }
+
+                    const repoData = await checkResponse.json();
+
+                    const ext = format === 'zipball' ? 'zip' : 'tar.gz';
+                    const fullFilename = `${repo}-${branch}.${ext}`;
+
+                    this.triggerDownload(downloadUrl, fullFilename);
+
+                    this.showMessage(`✅ Download started for ${owner}/${repo} (${branch} branch)`, 'success');
+                } catch (error) {
+                    if (error.message.includes('Failed to fetch')) {
+                        throw new Error('Network error. Please check your internet connection.');
+                    }
+                    throw error;
+                }
+            }
+
+            triggerDownload(url, filename) {
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = filename;
+                link.style.display = 'none';
+
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
         }
-      }
-      triggerDownload(url, filename) {
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = filename;
-        link.style.display = 'none';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      }
-    }
-    document.addEventListener('DOMContentLoaded', () => new GitRepoDownloader());
-    document.addEventListener('touchstart', (e) => {
-      if (e.target.classList.contains('download-btn')) e.target.style.transform = 'scale(0.98)';
-    });
-    document.addEventListener('touchend', (e) => {
-      if (e.target.classList.contains('download-btn')) setTimeout(() => (e.target.style.transform = ''), 150);
-    });
-  </script>
+
+        document.addEventListener('DOMContentLoaded', () => {
+            new GitRepoDownloader();
+        });
+
+        // Touch feedback for mobile
+        document.addEventListener('touchstart', function (e) {
+            if (e.target.classList.contains('download-btn')) {
+                e.target.style.transform = 'scale(0.98)';
+            }
+        });
+
+        document.addEventListener('touchend', function (e) {
+            if (e.target.classList.contains('download-btn')) {
+                setTimeout(() => {
+                    e.target.style.transform = '';
+                }, 150);
+            }
+        });
+    </script>
 </body>
-    </html>
-    
+</html>
