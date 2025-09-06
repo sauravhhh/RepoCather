@@ -152,24 +152,20 @@
                         </div>
                         
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                            <a 
-                                id="downloadZipLink" 
-                                href="#" 
-                                download
-                                class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-4 rounded-lg transition flex items-center justify-center space-x-2 pulse"
+                            <button 
+                                id="downloadZipBtn" 
+                                class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-4 rounded-lg transition flex items-center justify-center space-x-2"
                             >
                                 <i class="fas fa-file-archive"></i>
                                 <span>Download ZIP</span>
-                            </a>
-                            <a 
-                                id="downloadTarLink" 
-                                href="#" 
-                                download
+                            </button>
+                            <button 
+                                id="downloadTarBtn" 
                                 class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-4 rounded-lg transition flex items-center justify-center space-x-2"
                             >
                                 <i class="fas fa-file-archive"></i>
                                 <span>Download TAR.GZ</span>
-                            </a>
+                            </button>
                         </div>
                         
                         <button 
@@ -250,9 +246,12 @@
         const repoDescription = document.getElementById('repoDescription');
         const repoStars = document.getElementById('repoStars').querySelector('span');
         const repoForks = document.getElementById('repoForks').querySelector('span');
-        const downloadZipLink = document.getElementById('downloadZipLink');
-        const downloadTarLink = document.getElementById('downloadTarLink');
+        const downloadZipBtn = document.getElementById('downloadZipBtn');
+        const downloadTarBtn = document.getElementById('downloadTarBtn');
         const downloadAnotherBtn = document.getElementById('downloadAnotherBtn');
+        
+        // Repository info storage
+        let currentRepoInfo = null;
         
         // Parse GitHub URL to extract owner and repo name
         function parseGitHubUrl(url) {
@@ -339,19 +338,15 @@
             errorState.classList.add('hidden');
             successState.classList.remove('hidden');
             
+            // Store repo info for download
+            currentRepoInfo = repoInfo;
+            
             // Update repo information
             repoAvatar.src = repoInfo.owner.avatar_url;
             repoName.textContent = repoInfo.full_name;
             repoDescription.textContent = repoInfo.description || 'No description available';
             repoStars.textContent = repoInfo.stargazers_count;
             repoForks.textContent = repoInfo.forks_count;
-            
-            // Set download links
-            downloadZipLink.href = repoInfo.zipball_url;
-            downloadZipLink.download = `${repoInfo.name}-${repoInfo.default_branch}.zip`;
-            
-            downloadTarLink.href = repoInfo.tarball_url;
-            downloadTarLink.download = `${repoInfo.name}-${repoInfo.default_branch}.tar.gz`;
         }
         
         // Reset form
@@ -361,6 +356,31 @@
             errorState.classList.add('hidden');
             successState.classList.add('hidden');
             repoUrlInput.value = '';
+            currentRepoInfo = null;
+        }
+        
+        // Download repository
+        function downloadRepository(format) {
+            if (!currentRepoInfo) return;
+            
+            const owner = currentRepoInfo.owner.login;
+            const repo = currentRepoInfo.name;
+            const branch = currentRepoInfo.default_branch || 'main';
+            
+            // Construct direct download URL
+            const downloadUrl = `https://github.com/${owner}/${repo}/archive/refs/heads/${branch}.${format}`;
+            
+            // Create a temporary link element to trigger download
+            const link = document.createElement('a');
+            link.href = downloadUrl;
+            link.download = `${repo}-${branch}.${format}`;
+            link.target = '_blank';
+            link.rel = 'noopener noreferrer';
+            
+            // Trigger download
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         }
         
         // Handle form submission
@@ -390,6 +410,10 @@
                 showError(error.message);
             }
         });
+        
+        // Handle download buttons
+        downloadZipBtn.addEventListener('click', () => downloadRepository('zip'));
+        downloadTarBtn.addEventListener('click', () => downloadRepository('tar.gz'));
         
         // Handle download another button
         downloadAnotherBtn.addEventListener('click', resetForm);
